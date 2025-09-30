@@ -1,0 +1,36 @@
+body {
+    font-family: Tahoma, Verdana, Geneva, sans-serif;
+    font-size: 9pt;
+    margin-bottom: 32px;
+    background-color: #ffe;
+}
+input {
+    font-family: Tahoma, Verdana, Geneva, sans-serif;
+    font-size: 9pt;
+}
+img {
+    vertical-align: middle;
+}
+.statusbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 2px 4px;
+    box-sizing: border-box;
+    background-color: #eee;
+    border-top: #ccc 1px solid;
+}
+#statustext {
+    display: inline;
+    font-family: inherit;
+}
+.statusbar > table td:nth-child(1) {
+    width: 100%;
+}
+.statusbar > table td:nth-child(2) {
+    white-space: nowrap;
+}
+.pokemonitem {
+    display: inline-block;
+}
