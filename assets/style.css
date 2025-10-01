@@ -8,7 +8,7 @@ input {
     font-family: Tahoma, Verdana, Geneva, sans-serif;
     font-size: 9pt;
 }
-img {
+.smallbutton, img {
     vertical-align: middle;
 }
 .statusbar {
