@@ -7,6 +7,7 @@ body {
 input {
     font-family: Tahoma, Verdana, Geneva, sans-serif;
     font-size: 9pt;
+    vertical-align: middle;
 }
 .smallbutton, img {
     vertical-align: middle;
@@ -31,6 +32,82 @@ input {
 .statusbar > table td:nth-child(2) {
     white-space: nowrap;
 }
+#pokemonlist {
+    max-width: 900px;
+}
+.pokemonlistnav {
+    margin-top: 6px;
+}
+.pokemonlistnav form {
+    display: inline-block;
+    vertical-align: middle;
+}
+.pokemonlistnav form > input {
+    width: 60px;
+}
 .pokemonitem {
     display: inline-block;
+    background-color: white;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    padding: 2px;
+    border: 2px solid #aaa;
+    text-align: center;
+    color: black !important;
+    width: 128px;
+    height: 160px;
+    vertical-align: middle;
+}
+.pokemonitem img {
+    display: block;
+    width: 128px;
+    height: 128px;
+}
+#navbuttons a {
+    text-decoration: none;
+    background-color: #fff;
+    padding: 2px 5px;
+    border: 1px solid #aaa;
+    color: black !important;
+}
+#pokemondata {
+    background-color: white;
+    border: 2px solid #ffdf00;
+    padding: 6px;
+    width: 300px;
+}
+#pokemondata::backdrop {
+    background-color: rgb(255,255,255,0.8)
+}
+#pokemondata > .smallbutton {
+    float: right;
+}
+#pokemondata > table td:nth-child(1) {
+    color: #555;
+    padding-right: 8px;
+}
+#pokemondata > span {
+    font-weight: bold;
+}
+.sidebar {
+    width: 250px;
+    max-width: 250px;
+}
+.sidebar table {
+    border-collapse: collapse;
+    width: 100%;
+}
+.sidebar table tr {
+    border: 1px solid black;
+}
+.sidebar table td {
+    background: white;
+    padding: 2px 5px;
+}
+@media (width >= 1150px) {
+    .sidebar {
+        float: right;
+        padding-right: 20px;
+        padding-bottom: 40px;
+    }
 }
