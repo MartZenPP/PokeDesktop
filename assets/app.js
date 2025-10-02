@@ -17,44 +17,50 @@ let currentPokemon = '';
 
 async function bodyOnload() {
     await cargarPagina(curPage, pageLen);
+    refreshFavorites();
+    refreshHistory();
 }
 
 function firstPage() {
-    curPage = 1;
-    cargarPagina();
+    goToPage(1);
     event.preventDefault();
     return false;
 }
 
 function lastPage() {
-    curPage = maxPage;
-    cargarPagina();
-    event.preventDefault();
-    return false;
-}
-
-function nextPage() {
-    curPage++;
-    cargarPagina();
+    goToPage(maxPage);
     event.preventDefault();
     return false;
 }
 
 function previousPage() {
-    curPage--;
-    cargarPagina();
+    goToPage(curPage - 1);
     event.preventDefault();
     return false;
 }
 
-async function jumpToPokemon(form, event) {
-    curPage = form.pagina.value;
-    cargarPagina();
+function nextPage() {
+    goToPage(curPage + 1);
     event.preventDefault();
     return false;
+}
+
+function jumpToPokemon(form, event) {
+    let tempPage = form.pagina.value;
+    if (tempPage < 1 || tempPage > maxPage) form.pagina.value = curPage;
+    else goToPage(tempPage);
+    event.preventDefault();
+    return false;
+}
+
+function goToPage(page) {
+    if (page < 1 || page > maxPage) return;
+    curPage = page;
+    cargarPagina();
 }
 
 async function cargarPagina() {
+    document.forms['pageSelect'].pagina.value = curPage;
     const list = document.getElementById("pokemonlist");
     const page = await getPokemonPage(curPage, pageLen);
     maxPokemon = page.count;
@@ -64,21 +70,12 @@ async function cargarPagina() {
         let id = item.url.split("/")[6];
         let pia = document.createElement("a");
         let pit = document.createElement("div");
-        //let pif = document.createElement("a");
-        //let pifimg = document.createElement("img");
         let pii = document.createElement("img");
         let pin = document.createElement("div");
-        /*pifimg.src = "assets/emblem-favorite.svg";
-        pifimg.width = 20;
-        pif.title = "Añadir a favoritos";
-        pif.href = "#";
-        pif.onclick = "e.preventDefault(); return false;";
-        pif.appendChild(pifimg);*/
         pii.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
         pii.width = 128;
         pin.textContent = item.name.charAt(0).toUpperCase() + item.name.slice(1);
         pit.className = "pokemonitem";
-        //pit.appendChild(pif);
         pia.href = "#";
         pia.onclick = botonPokemon;
         pit.appendChild(pii);
@@ -108,11 +105,12 @@ async function mostrarPokemon(showName) {
         showData = await getPokemon(showName);
     }
     catch (e) {
-        if (e.message === "404") alert("Error: Este Pokémon no se encontró.");
+        if (e.message === "404") alert("Error: Este Pokémon no se encontró. Asegurate de que lo estás escribiendo bien.");
         else alert("Se encontró un error interno: " + e.message + "\n" + e.stack);
         return;
     }
     document.querySelector("dialog#pokemondata > span").textContent = fancyShowName;
+    document.querySelector("#pokemondatastatus").textContent = (isInFavorites(fancyShowName) ? "Favorito" : "");
     let dataTable = document.querySelectorAll("dialog#pokemondata > table td");
     let nombre = dataTable[1];
     let numero = dataTable[3];
@@ -135,9 +133,204 @@ async function mostrarPokemon(showName) {
     habilidades.textContent = habilidades.textContent.slice(0, -2); // Eliminar última coma
     // Esto hace que se carguen las imágenes antes de que se abra la ventana
     let sbTimeout;
-    let showBox = () => {document.getElementById("pokemondata").showModal(); clearTimeout(sbTimeout)};
+    let showBox = () => {
+        document.getElementById("pokemondata").showModal();
+        addToHistory(fancyShowName);
+        currentPokemon = fancyShowName;
+        clearTimeout(sbTimeout)
+    };
     imagen.onload = showBox;
     sbTimeout = setTimeout(showBox, 2000);
+}
+
+function addToHistory(fancyShowName) {
+    let hist;
+    try {
+        hist = JSON.parse(localStorage.getItem("PokeDesktopHistory")) || [];
+    }
+    catch {
+        hist = [];
+    }
+    if (hist[hist.length - 1] != fancyShowName) {
+        hist = hist.filter(item => item !== fancyShowName)
+        hist.push(fancyShowName);
+        localStorage.setItem("PokeDesktopHistory", JSON.stringify(hist));
+    }
+    refreshHistory();
+}
+
+function refreshHistory() {
+    let hist;
+    try {
+        hist = JSON.parse(localStorage.getItem("PokeDesktopHistory")) || [];
+    }
+    catch {
+        hist = [];
+    }
+    const list = document.getElementById("history");
+    list.replaceChildren();
+    hist.toReversed().forEach((item) => {
+        let historya = document.createElement("a");
+        let historydiv = document.createElement("div");
+        let removehist = document.createElement("img");
+        let historyspan = document.createElement("span");
+        removehist.src = "assets/process-stop.svg";
+        removehist.width = 14;
+        removehist.className = "smallbutton";
+        removehist.title = "Quitar del historial";
+        historyspan.textContent = item;
+        historydiv.className = "history";
+        historya.href = "#";
+        historya.className = "historya";
+        historya.onclick = historyButton;
+        historydiv.appendChild(historyspan);
+        historydiv.appendChild(removehist);
+        historya.appendChild(historydiv);
+        list.appendChild(historya);
+    })
+}
+
+function historyButton(e) {
+    if (e.target.className === "smallbutton") {
+        deleteFromHistory(e.currentTarget);
+    }
+    else {
+        mostrarPokemon(e.currentTarget.querySelector("div.history > span").textContent);
+    }
+    e.preventDefault();
+    return false;
+}
+
+function deleteHistory() {
+    localStorage.removeItem("PokeDesktopHistory");
+    refreshHistory();
+}
+
+function deleteFromHistory(item) {
+    // Al final por lo menos Chrome parece manejar esto mejor de lo que pensaba, esto quedó muy complejo
+    let name = item.querySelector("div.history > span").textContent;
+    let hist;
+    try {
+        hist = JSON.parse(localStorage.getItem("PokeDesktopHistory")) || [];
+    }
+    catch {
+        hist = [];
+    }
+    hist = hist.filter(item => item !== name);
+    localStorage.setItem("PokeDesktopHistory", JSON.stringify(hist));
+    item.remove();
+}
+
+function addToFavorites(fancyShowName) {
+    let favs;
+    try {
+        favs = JSON.parse(localStorage.getItem("PokeDesktopFavorites")) || [];
+    }
+    catch {
+        favs = [];
+    }
+    favs = favs.filter(item => item !== fancyShowName)
+    favs.push(fancyShowName);
+    localStorage.setItem("PokeDesktopFavorites", JSON.stringify(favs));
+    refreshFavorites();
+}
+
+function refreshFavorites() {
+    let favs;
+    try {
+        favs = JSON.parse(localStorage.getItem("PokeDesktopFavorites")) || [];
+    }
+    catch {
+        favs = [];
+    }
+    const list = document.getElementById("favorites");
+    list.replaceChildren();
+    favs.toReversed().forEach((item) => {
+        let favoritea = document.createElement("a");
+        let favoritediv = document.createElement("div");
+        let removefav = document.createElement("img");
+        let favoritespan = document.createElement("span");
+        removefav.src = "assets/process-stop.svg";
+        removefav.width = 14;
+        removefav.className = "smallbutton";
+        removefav.title = "Quitar de favoritos";
+        favoritespan.textContent = item;
+        favoritediv.className = "favorite";
+        favoritea.href = "#";
+        favoritea.className = "favoritea";
+        favoritea.onclick = favoriteButton;
+        favoritediv.appendChild(favoritespan);
+        favoritediv.appendChild(removefav);
+        favoritea.appendChild(favoritediv);
+        list.appendChild(favoritea);
+    })
+}
+
+function favoriteButton(e) {
+    if (e.target.className === "smallbutton") {
+        deleteFromFavorites(e.currentTarget);
+    }
+    else {
+        mostrarPokemon(e.currentTarget.querySelector("div.favorite > span").textContent);
+    }
+    e.preventDefault();
+    return false;
+}
+
+function deleteFavorites() {
+    localStorage.removeItem("PokeDesktopFavorites");
+    refreshFavorites();
+}
+
+function deleteFromFavorites(item) {
+    // Al final Chrome parece manejar esto mejor de lo que pensaba, esto quedó muy complejo
+    let name = item.querySelector("div.favorite > span").textContent;
+    let favs;
+    try {
+        favs = JSON.parse(localStorage.getItem("PokeDesktopFavorites")) || [];
+    }
+    catch {
+        favs = [];
+    }
+    favs = favs.filter(item => item !== name);
+    localStorage.setItem("PokeDesktopFavorites", JSON.stringify(favs));
+    item.remove();
+}
+
+function deleteFromFavoritesString(fancyShowName) {
+    let favs;
+    try {
+        favs = JSON.parse(localStorage.getItem("PokeDesktopFavorites")) || [];
+    }
+    catch {
+        favs = [];
+    }
+    favs = favs.filter(item => item !== fancyShowName);
+    localStorage.setItem("PokeDesktopFavorites", JSON.stringify(favs));
+    refreshFavorites();
+}
+
+function isInFavorites(fav) {
+    let favs;
+    try {
+        favs = JSON.parse(localStorage.getItem("PokeDesktopFavorites")) || [];
+    }
+    catch {
+        favs = [];
+    }
+    return favs.includes(fav);
+}
+
+function addToFav(elem) {
+    if (isInFavorites(currentPokemon)) {
+        elem.title = "Añadir a favoritos";
+        deleteFromFavoritesString(currentPokemon);
+    }
+    else {
+        elem.title = "Quitar de favoritos";
+        addToFavorites(currentPokemon);
+    }
+    document.querySelector("#pokemondatastatus").textContent = (isInFavorites(currentPokemon) ? "Favorito" : "");
 }
 
 function buildListUrl(page = 1, limit = 24) {

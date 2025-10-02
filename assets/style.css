@@ -1,4 +1,4 @@
-body {
+    body {
     font-family: Tahoma, Verdana, Geneva, sans-serif;
     font-size: 9pt;
     margin-bottom: 32px;
@@ -35,15 +35,12 @@ input {
 #pokemonlist {
     max-width: 900px;
 }
-.pokemonlistnav {
-    margin-top: 6px;
-}
 .pokemonlistnav form {
     display: inline-block;
     vertical-align: middle;
 }
 .pokemonlistnav form > input {
-    width: 60px;
+    width: 30px;
 }
 .pokemonitem {
     display: inline-block;
@@ -89,10 +86,6 @@ input {
 #pokemondata > span {
     font-weight: bold;
 }
-.sidebar {
-    width: 250px;
-    max-width: 250px;
-}
 .sidebar table {
     border-collapse: collapse;
     width: 100%;
@@ -106,8 +99,36 @@ input {
 }
 @media (width >= 1150px) {
     .sidebar {
-        float: right;
         padding-right: 20px;
         padding-bottom: 40px;
+        position: absolute;
+        right: 0;
+        top: 0;
     }
+}
+#favorites, #history {
+    height: 200px;
+    overflow-y: auto;
+}
+.favorite, .history {
+    display: block;
+    background-color: white;
+    padding: 4px;
+    border: 2px solid #aaa;
+    color: black !important;
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+.favorite .smallbutton, .history .smallbutton {
+    float: right;
+}
+.favoritea, .historya {
+    text-decoration: none;
+}
+#pokemondatastatus {
+    float: right;
+    padding-right: 4px;
+}
+.logo {
+    padding-top: 10px;
 }

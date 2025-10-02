@@ -4,40 +4,21 @@
         <title>.:: Sistemas Informaticos de P&oacute;k&eacute;m0n ::.</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
+        <meta name="robots" content="nofollow, noindex">
         <link rel="stylesheet" href="assets/style.css">
     </head>
     <body onload="bodyOnload()">
-        <div class="sidebar">
-        <h2>Buscador</h2>
-        <hr>
-        <form onsubmit="buscarPokemon(this, event)"><label for="searchbuscar"><img src="assets/system-search.svg" alt="Buscar" width="20">&nbsp;</label><input name="buscar" id="searchbuscar"><input type="submit" value="Buscar"></form>
-        <h2>Favoritos</h2>
-        <hr>
-        <div id="favorites">
-            <table>
-                <tr><td>Uno</td><td><a class="smallbutton" title="Quitar de favoritos" href="#"><img src="assets/emblem-favorite.svg" width="20"></a></td></tr>
-                <tr><td>Prueba largo igual no importa</td><td><a class="smallbutton" title="Quitar de favoritos" href="#"><img src="assets/emblem-favorite.svg" width="20"></a></td></tr>
-            </table>
-        </div>
-        <h2>Historial</h2>
-        <hr>
-        <div id="history">
-            <table>
-                <tr><td>Uno</td><td><a class="smallbutton" title="Quitar de favoritos" href="#"><img src="assets/emblem-favorite.svg" width="20"></a></td></tr>
-                <tr><td>Prueba largo igual no importa</td><td><a class="smallbutton" title="Quitar de favoritos" href="#"><img src="assets/emblem-favorite.svg" width="20"></a></td></tr>
-            </table>
-        </div>
-        </div>
         <dialog id="pokemondata">
-            <span>Venusaur</span>
-            <a class="smallbutton" title="Cerrar" href="#" onclick="this.parentNode.close();e.preventDefault();return false;"><img src="assets/process-stop.svg" width="20"></a>       
-            <a class="smallbutton" title="Añadir a favoritos" href="#" onclick="addToFav();e.preventDefault();return false;"><img src="assets/emblem-favorite.svg" width="20"></a>
+            <span>1</span>
+            <a class="smallbutton" title="Cerrar" href="#" onclick="this.parentNode.close();return false;"><img src="assets/process-stop.svg" width="20"></a>       
+            <a class="smallbutton" title="Favorito" href="#" onclick="addToFav(this);return false;"><img src="assets/emblem-favorite.svg" width="20"></a>
+            <span id="pokemondatastatus">Favorito</span>
             <hr>
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png" alt="Venusaur" width="128">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="1" width="128">
             <table>
                 <tr>
                     <td>Nombre</td>
-                    <td>Venusaur</td>
+                    <td>1</td>
                 </tr>
                 <tr>
                     <td>Número</td>
@@ -61,22 +42,28 @@
                 </tr>
             </table>
         </dialog>
-        <h1>Lista</h1>
-        <div id="pokemonlist"></div>
+        <h1>Pokédex</h1>
         <div class="pokemonlistnav">
             <a class="smallbutton" title="Primera página" href="#" onclick="firstPage()"><img src="assets/go-first.svg" width="20"></a>
             <a class="smallbutton" title="Página anterior" href="#" onclick="previousPage()"><img src="assets/go-previous.svg" width="20"></a>
-            <!--<span id="navbuttons">
-                <a href="#" onclick="jumpTo(e)">1</a>
-                <a href="#" onclick="jumpTo(e)">2</a>
-                <a href="#" onclick="jumpTo(e)">3</a>
-                <a href="#" onclick="jumpTo(e)">4</a>
-                <a href="#" onclick="jumpTo(e)">5</a>
-                <a href="#" onclick="jumpTo(e)">6</a>
-            </span>-->
-            <form onsubmit="jumpToPokemon(this, event)"><input name="pagina" inputmode="numeric" value="1"></form>
+            <form onsubmit="jumpToPokemon(this, event)" name="pageSelect"><input name="pagina" inputmode="numeric" value="1" autocomplete="off"></form>
             <a class="smallbutton" title="Página siguiente" href="#" onclick="nextPage()"><img src="assets/go-next.svg" width="20"></a>
             <a class="smallbutton" title="Última página" href="#" onclick="lastPage()"><img src="assets/go-last.svg" width="20"></a>
+        </div><br>
+        <div id="pokemonlist"></div>
+        <div class="sidebar">
+        <img src="assets/logo.svg" class="logo">
+        <h2>Buscador</h2>
+        <hr>
+        <form onsubmit="buscarPokemon(this, event)"><label for="searchbuscar"><img src="assets/system-search.svg" alt="Buscar" width="20">&nbsp;</label><input name="buscar" id="searchbuscar"><input type="submit" value="Buscar"></form>
+        <h2>Favoritos</h2>
+        <hr>
+        <div id="favorites">
+        </div>
+        <h2>Historial</h2>
+        <hr>
+        <div id="history">
+        </div>
         </div>
         <div class="statusbar">
             <table>
@@ -85,7 +72,7 @@
                         <pre id="statustext">.:: Aplicación de Pokemones ::.</span>
                     </td>
                     <td>
-                        Version en desarrollo
+                        Versión 1.0
                     </td>
                 </tr>
             </table>
